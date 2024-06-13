@@ -1,18 +1,24 @@
-- name: docker build and push
-  hosts: local  # Replace with the hostname or IP address of your target server
-  become: yes  # Run tasks with sudo privileges
+---
+- name: Docker build and push
+  hosts: local
+  become: yes
 
   tasks:
     - name: Update apt package cache
       apt:
         update_cache: yes   
 
+    - name: Ensure the workspace directory exists
+      file:
+        path: /var/lib/jenkins/workspace/pet-store
+        state: directory
+
     - name: Build Docker Image
       command: docker build -t petstore .
       args:
-        chdir: /var/lib/jenkins/workspace/petstore
+        chdir: /var/lib/jenkins/workspace/pet-store
 
-    - name: tag image
+    - name: Tag image
       command: docker tag petstore:latest shaik2024/petstore:latest 
 
     - name: Log in to Docker Hub
